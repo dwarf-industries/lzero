@@ -39,6 +39,17 @@ contract Register {
         return true;
     }
 
+    function isOracleRegistered() external view returns (bool) {
+        for (uint i = 0; i < oracles.length; i++) {
+            Oracle memory oracle = oracles[i];
+            if(oracle.name == msg.sender) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     function updateRegistrationFee(uint256 fee) external payable onlyDao returns (bool) {
         registerFee = fee;
         return true;
