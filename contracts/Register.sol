@@ -50,6 +50,14 @@ contract Register {
         return false;
     }
 
+    function getRegistrationFee() external view returns (uint256) {
+        return registerFee;
+    }
+
+    function getReportFee() external view returns (uint256) {
+        return reportFee;
+    }
+
     function updateRegistrationFee(uint256 fee) external payable onlyDao returns (bool) {
         registerFee = fee;
         return true;
