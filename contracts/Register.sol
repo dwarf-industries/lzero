@@ -19,6 +19,7 @@ contract Register {
     event OracleBlacklisted(address indexed blacklistedOracle);
 
     constructor(uint256 _registerFee, uint256 _reportFee, address daoOwner) {
+        
         registerFee = _registerFee;
         reportFee = _reportFee;
         dao = daoOwner;
