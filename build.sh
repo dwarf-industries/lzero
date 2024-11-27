@@ -1,2 +1,11 @@
-rm -rf output/ && solc --base-path . --abi --bin contracts/Register.sol -o output && abigen --bin=output/Register.bin --abi=output/Register.abi --pkg=register --out=Register.go && solc --base-path . --abi --bin contracts/Ledger.sol -o output && abigen --bin=output/PaymentLedger.bin --abi=output/PaymentLedger.abi --pkg=ledger --out=Ledger.go
+#!/bin/bash
 
+rm -rf output/ go_contracts/
+
+mkdir -p go_contracts
+
+for contract in contracts/*.sol; do
+    contract_name=$(basename "$contract" .sol)
+    solc --base-path . --abi --bin "$contract" -o output
+    abigen --bin="output/$contract_name.bin" --abi="output/$contract_name.abi" --pkg="$contract_name" --out="go_contracts/$contract_name.go"
+done
