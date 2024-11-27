@@ -8,11 +8,11 @@ contract FeeSetter {
     uint256 private networkFee;
     address private networkFeeCollector;
 
-    constructor(uint256 _fee, address _networkFeeCollector, uint256 _networkFee) {
+    constructor(uint256 _fee,  uint256 _networkFee,address _networkFeeCollector, address dao) {
         costPerKilobyte = _fee;
         networkFeeCollector = _networkFeeCollector; 
         networkFee = _networkFee;
-        Owner = msg.sender;
+        Owner = dao;
     }   
 
     function changeNetworkFee(uint256 fee) public payable onlyDao returns (bool) {
