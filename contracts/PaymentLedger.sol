@@ -134,6 +134,5 @@ contract PaymentLedger {
         }
 
         return totalToClaim;
-    }
- 
+    } 
 }
