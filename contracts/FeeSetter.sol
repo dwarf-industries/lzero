@@ -15,6 +15,11 @@ contract FeeSetter {
         Owner = dao;
     }   
 
+
+    function getNetworkFeeCollector() external view returns (address) {
+        return networkFeeCollector;
+    }
+
     function changeNetworkFee(uint256 fee) public payable onlyDao returns (bool) {
         networkFee = fee;
         return true;
