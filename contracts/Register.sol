@@ -2,26 +2,32 @@
 pragma solidity ^0.8.19;
 
 import "../structures/Oracle.sol";
+import "../interfaces/IFeeSetter.sol";
 
 contract Register {
+    IFeeSetter feeSetter;
     Oracle[] private oracles;
+    uint256 private registerTaxPercentage = 5;
     uint256 private registerFee;
     uint256 private reportFee;
     address private dao;
+    bool private isRevoked = false;
 
     mapping(address => mapping(address => bool)) private oracleReports; 
     mapping(address => uint256) private reportCounts;  
     mapping(address => bool) private blacklisted;  
-    mapping(address => uint256) private rewards;  
+    mapping(address => uint256) private rewards;
+    mapping(address => uint256) private stakes;  
 
     event OracleRegistered(address indexed oracleAddress, string ip, string port);
     event OracleReported(address indexed reporter, address indexed reportedOracle);
     event OracleBlacklisted(address indexed blacklistedOracle);
+    event OracleRegisterTaxUpdated(uint256 newTax);
 
-    constructor(uint256 _registerFee, uint256 _reportFee, address daoOwner) {
-        
+    constructor(uint256 _registerFee, uint256 _reportFee, address _feeSetter, address daoOwner) {
         registerFee = _registerFee;
         reportFee = _reportFee;
+        feeSetter = IFeeSetter(_feeSetter);
         dao = daoOwner;
     }
 
@@ -36,9 +42,26 @@ contract Register {
             reputation: 1 
         }));
 
+        uint256 registrationTax = (registerFee * registerTaxPercentage) / 100;
+        uint256 stakeAmount = msg.value - registrationTax;
+        address taxCollector = feeSetter.getNetworkFeeCollector();
+        payable(taxCollector).transfer(registrationTax);
+        stakes[msg.sender] = stakeAmount;  
+
         emit OracleRegistered(msg.sender, ip, port);
         return true;
     }
+
+    function changeRegisterTax(uint256 tax) external onlyDao returns (bool) {
+        registerTaxPercentage = tax;
+        emit OracleRegisterTaxUpdated(tax);
+        return true;
+    }
+
+    function revokeOwnership() public onlyDao returns (bool) {
+        isRevoked = true;
+        return true;
+    } 
 
     function isOracleRegistered() external view returns (bool) {
         for (uint i = 0; i < oracles.length; i++) {
@@ -119,6 +142,8 @@ contract Register {
     }
 
     modifier onlyOracle() {
+        require(!isRevoked, "Ownership is revoked, no administrative changes allowed!");
+
         bool isOracle = false;
         for (uint256 i = 0; i < oracles.length; i++) {
             if (oracles[i].name == msg.sender && !blacklisted[msg.sender]) {
@@ -137,3 +162,4 @@ contract Register {
     }
 
 }
+
