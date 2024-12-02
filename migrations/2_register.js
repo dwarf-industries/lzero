@@ -21,5 +21,5 @@ module.exports = async function (deployer) {
     console.log(deployedFeeSetter.address);
 
     
-    deployer.deploy(Register,registerFeeEther,reportFeeEther,deployedFeeSetter.address,process.env.DAO);
+   await deployer.deploy(Register,registerFeeEther,reportFeeEther,deployedFeeSetter.address,process.env.DAO);
 };

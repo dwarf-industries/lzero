@@ -15,5 +15,5 @@ module.exports = async function  (deployer)  {
     console.log(deployedFeeSetter.address);
 
     
-    deployer.deploy(Ledger,deployedFeeSetter.address);
+    await deployer.deploy(Ledger,deployedFeeSetter.address);
 };
