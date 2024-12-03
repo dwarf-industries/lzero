@@ -1,0 +1,91 @@
+
+Compiling your contracts...
+===========================
+> Everything is up to date, there is nothing to compile.
+
+
+Starting migrations...
+======================
+> Network name:    'local'
+> Network id:      5777
+> Block gas limit: 6721975 (0x6691b7)
+
+
+1_fee_setter.js
+===============
+0.0001
+0x97a33D7B91fb9faeA7240e973E6A9ec173589a35
+5
+
+   Replacing 'FeeSetter'
+   ---------------------
+   > transaction hash:    0x2d0c06110cb011f5d5c8dc932f696362093a80bdd885f73c60c75e1eeb363f19
+   > Blocks: 0            Seconds: 0
+   > contract address:    0xDb1b056256dA721213159Eb05F55930f35bd95cB
+   > block number:        3865
+   > block timestamp:     1733217773
+   > account:             0x97a33D7B91fb9faeA7240e973E6A9ec173589a35
+   > balance:             99999999988756513.72941446945555899
+   > gas used:            250619 (0x3d2fb)
+   > gas price:           20 gwei
+   > value sent:          0 ETH
+   > total cost:          0.00501238 ETH
+
+   > Saving artifacts
+   -------------------------------------
+   > Total cost:          0.00501238 ETH
+
+
+2_register.js
+=============
+10
+2
+Fee Setter Service address
+0xDb1b056256dA721213159Eb05F55930f35bd95cB
+
+   Replacing 'Register'
+   --------------------
+   > transaction hash:    0xc5642b59373026706d3b90d3465dc2f1eedd9ef50d304e4398c48ad0f32abd2a
+   > Blocks: 0            Seconds: 0
+   > contract address:    0x97D0Ad7Fe11a5f44E907480e030060D0CD2fe7C2
+   > block number:        3866
+   > block timestamp:     1733217773
+   > account:             0x97a33D7B91fb9faeA7240e973E6A9ec173589a35
+   > balance:             99999999988756513.70381038945555899
+   > gas used:            1280204 (0x1388cc)
+   > gas price:           20 gwei
+   > value sent:          0 ETH
+   > total cost:          0.02560408 ETH
+
+   > Saving artifacts
+   -------------------------------------
+   > Total cost:          0.02560408 ETH
+
+
+3_ledger.js
+===========
+Fee Setter Service address
+0xDb1b056256dA721213159Eb05F55930f35bd95cB
+
+   Replacing 'PaymentLedger'
+   -------------------------
+   > transaction hash:    0x987361695ca5216e6980c52dfc8a547a8703a6f86c7c90378632e673f5c3c9c8
+   > Blocks: 0            Seconds: 0
+   > contract address:    0x923C74DB30Def2DE950e8d9e711E7758881840d1
+   > block number:        3867
+   > block timestamp:     1733217773
+   > account:             0x97a33D7B91fb9faeA7240e973E6A9ec173589a35
+   > balance:             99999999988756513.69202798945555899
+   > gas used:            589120 (0x8fd40)
+   > gas price:           20 gwei
+   > value sent:          0 ETH
+   > total cost:          0.0117824 ETH
+
+   > Saving artifacts
+   -------------------------------------
+   > Total cost:           0.0117824 ETH
+
+Summary
+=======
+> Total deployments:   3
+> Final cost:          0.04239886 ETH
