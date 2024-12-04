@@ -30,7 +30,7 @@ contract FeeSetter {
         return true;
     }
 
-    function getCostPerKylobyte() external view  returns (uint256) {
+    function getCostPerKilobyte() external view  returns (uint256) {
         return costPerKilobyte;
     }
 
