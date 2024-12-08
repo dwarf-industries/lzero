@@ -13,16 +13,19 @@ contract Register {
     address private dao;
     bool private isRevoked = false;
 
-    mapping(address => mapping(address => bool)) private oracleReports; 
-    mapping(address => uint256) private reportCounts;  
-    mapping(address => bool) private blacklisted;  
+    mapping(address => mapping(address => bool)) private oracleReports;
+    mapping(address => uint256) private reportCounts;
+    mapping(address => uint256) private oracleIndex;
+    mapping(address => bool) private blacklisted;
     mapping(address => uint256) private rewards;
-    mapping(address => uint256) private stakes;  
+    mapping(address => uint256) private stakes;
 
     event OracleRegistered(address indexed oracleAddress, string ip, string port);
     event OracleReported(address indexed reporter, address indexed reportedOracle);
     event OracleBlacklisted(address indexed blacklistedOracle);
     event OracleRegisterTaxUpdated(uint256 newTax);
+    event OracleOnline(address indexed oracleAddress);
+    event OracleOffline(address indexed oracleAddress);
 
     constructor(uint256 _registerFee, uint256 _reportFee, address _feeSetter, address daoOwner) {
         registerFee = _registerFee;
@@ -39,17 +42,40 @@ contract Register {
             name: msg.sender,
             ip: ip,
             port: port,
-            reputation: 1 
+            reputation: 1,
+            isOnline: true
         }));
+
+        oracleIndex[msg.sender] = oracles.length - 1; // Correctly store index
 
         uint256 registrationTax = (registerFee * registerTaxPercentage) / 100;
         uint256 stakeAmount = msg.value - registrationTax;
         address taxCollector = feeSetter.getNetworkFeeCollector();
         payable(taxCollector).transfer(registrationTax);
-        stakes[msg.sender] = stakeAmount;  
+        stakes[msg.sender] = stakeAmount;
 
         emit OracleRegistered(msg.sender, ip, port);
         return true;
+    }
+
+    function LogOut() public onlyOracle returns (bool) {
+        uint256 index = oracleIndex[msg.sender];
+        oracles[index].isOnline = false;
+        emit OracleOffline(msg.sender);
+        return true;
+    }
+
+    function Login() public onlyOracle returns (bool) {
+        uint256 index = oracleIndex[msg.sender];
+        oracles[index].isOnline = true;
+        emit OracleOnline(msg.sender);
+        return true;
+    }
+
+    function self() external view onlyOracle returns (Oracle memory) {
+        uint256 index = oracleIndex[msg.sender];
+        require(index < oracles.length, "Invalid oracle index");
+        return oracles[index];
     }
 
     function changeRegisterTax(uint256 tax) external onlyDao returns (bool) {
@@ -61,17 +87,11 @@ contract Register {
     function revokeOwnership() public onlyDao returns (bool) {
         isRevoked = true;
         return true;
-    } 
+    }
 
     function isOracleRegistered() external view returns (bool) {
-        for (uint i = 0; i < oracles.length; i++) {
-            Oracle memory oracle = oracles[i];
-            if(oracle.name == msg.sender) {
-                return true;
-            }
-        }
-
-        return false;
+        uint256 index = oracleIndex[msg.sender];
+        return index < oracles.length && oracles[index].name == msg.sender;
     }
 
     function getRegistrationFee() external view returns (uint256) {
@@ -82,13 +102,12 @@ contract Register {
         return reportFee;
     }
 
-    function updateRegistrationFee(uint256 fee) external payable onlyDao returns (bool) {
+    function updateRegistrationFee(uint256 fee) external onlyDao returns (bool) {
         registerFee = fee;
         return true;
     }
 
-
-    function updateReportFee(uint256 fee) external payable onlyDao returns (bool) {
+    function updateReportFee(uint256 fee) external onlyDao returns (bool) {
         reportFee = fee;
         return true;
     }
@@ -105,14 +124,14 @@ contract Register {
 
         oracleReports[msg.sender][oracleAddress] = true;
         reportCounts[oracleAddress]++;
-        
+
         emit OracleReported(msg.sender, oracleAddress);
 
-        if (reportCounts[oracleAddress] >= (oracles.length / 2)+1) {
+        if (reportCounts[oracleAddress] >= (oracles.length / 2) + 1) {
             blacklisted[oracleAddress] = true;
             emit OracleBlacklisted(oracleAddress);
-            rewards[msg.sender] += reportFee;  
-            
+            rewards[msg.sender] += reportFee;
+
             distributeRewards(oracleAddress);
         }
 
@@ -127,12 +146,13 @@ contract Register {
                 numReporters++;
             }
         }
+
         uint256 rewardPerReporter = registerFee / numReporters;
-        
+
         for (uint256 i = 0; i < oracles.length; i++) {
             if (oracleReports[oracles[i].name][blacklistedOracle]) {
                 payable(oracles[i].name).transfer(rewards[oracles[i].name] + rewardPerReporter);
-                rewards[oracles[i].name] = 0;  
+                rewards[oracles[i].name] = 0;
             }
         }
     }
@@ -142,24 +162,15 @@ contract Register {
     }
 
     modifier onlyOracle() {
-        require(!isRevoked, "Ownership is revoked, no administrative changes allowed!");
-
-        bool isOracle = false;
-        for (uint256 i = 0; i < oracles.length; i++) {
-            if (oracles[i].name == msg.sender && !blacklisted[msg.sender]) {
-                isOracle = true;
-                break;
-            }
-        }
-        require(isOracle, "Not an authorized oracle");
+        uint256 index = oracleIndex[msg.sender];
+        require(index < oracles.length, "Not an authorized oracle");
+        require(oracles[index].name == msg.sender, "Oracle mismatch at index");
         _;
     }
 
-
     modifier onlyDao() {
+        require(!isRevoked, "Ownership is revoked, no administrative changes allowed!");
         require(msg.sender == dao, "Not authorized");
         _;
     }
-
 }
-
