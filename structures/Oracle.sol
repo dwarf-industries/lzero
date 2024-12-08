@@ -6,4 +6,5 @@ struct Oracle {
     string ip;
     string port;
     uint256 reputation; 
+    bool isOnline;
 }
