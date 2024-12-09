@@ -16,7 +16,6 @@ contract Register {
     mapping(address => mapping(address => bool)) private oracleReports;
     mapping(address => uint256) private reportCounts;
     mapping(address => uint256) private oracleIndex;
-    mapping(address => bool) private blacklisted;
     mapping(address => uint256) private rewards;
     mapping(address => uint256) private stakes;
 
@@ -36,7 +35,6 @@ contract Register {
 
     function register(string memory ip, string memory port) public payable returns (bool) {
         require(msg.value >= registerFee, "Insufficient registration fee");
-        require(!blacklisted[msg.sender], "Cannot register a blacklisted oracle");
 
         oracles.push(Oracle({
             name: msg.sender,
@@ -46,7 +44,7 @@ contract Register {
             isOnline: true
         }));
 
-        oracleIndex[msg.sender] = oracles.length - 1; // Correctly store index
+        oracleIndex[msg.sender] = oracles.length - 1;  
 
         uint256 registrationTax = (registerFee * registerTaxPercentage) / 100;
         uint256 stakeAmount = msg.value - registrationTax;
@@ -78,6 +76,12 @@ contract Register {
         return oracles[index];
     }
 
+    function getOracle(address _oracle) external view onlyOracle returns (Oracle memory) {
+        uint256 index = oracleIndex[_oracle];
+        require(index < oracles.length, "Invalid oracle index");
+        return oracles[index];
+    }
+ 
     function changeRegisterTax(uint256 tax) external onlyDao returns (bool) {
         registerTaxPercentage = tax;
         emit OracleRegisterTaxUpdated(tax);
@@ -115,52 +119,7 @@ contract Register {
     function getOracles() external view returns (Oracle[] memory) {
         return oracles;
     }
-
-    function reportOracle(address oracleAddress) external payable onlyOracle returns (bool) {
-        require(oracleAddress != msg.sender, "Cannot report yourself");
-        require(!blacklisted[oracleAddress], "Oracle is already blacklisted");
-        require(!oracleReports[msg.sender][oracleAddress], "Oracle already reported by you");
-        require(msg.value >= reportFee, "Insufficient report fee");
-
-        oracleReports[msg.sender][oracleAddress] = true;
-        reportCounts[oracleAddress]++;
-
-        emit OracleReported(msg.sender, oracleAddress);
-
-        if (reportCounts[oracleAddress] >= (oracles.length / 2) + 1) {
-            blacklisted[oracleAddress] = true;
-            emit OracleBlacklisted(oracleAddress);
-            rewards[msg.sender] += reportFee;
-
-            distributeRewards(oracleAddress);
-        }
-
-        return true;
-    }
-
-    function distributeRewards(address blacklistedOracle) private {
-        uint256 numReporters = 0;
-
-        for (uint256 i = 0; i < oracles.length; i++) {
-            if (oracleReports[oracles[i].name][blacklistedOracle]) {
-                numReporters++;
-            }
-        }
-
-        uint256 rewardPerReporter = registerFee / numReporters;
-
-        for (uint256 i = 0; i < oracles.length; i++) {
-            if (oracleReports[oracles[i].name][blacklistedOracle]) {
-                payable(oracles[i].name).transfer(rewards[oracles[i].name] + rewardPerReporter);
-                rewards[oracles[i].name] = 0;
-            }
-        }
-    }
-
-    function isBlacklisted(address oracleAddress) external view returns (bool) {
-        return blacklisted[oracleAddress];
-    }
-
+ 
     modifier onlyOracle() {
         uint256 index = oracleIndex[msg.sender];
         require(index < oracles.length, "Not an authorized oracle");
