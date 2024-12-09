@@ -1,9 +1,4 @@
 
-Compiling your contracts...
-===========================
-> Everything is up to date, there is nothing to compile.
-
-
 Starting migrations...
 ======================
 > Network name:    'local'
@@ -19,13 +14,13 @@ Starting migrations...
 
    Replacing 'FeeSetter'
    ---------------------
-   > transaction hash:    0x7c756bbea9a57939a7014afedac2923c9d6cbd7f14c0d6971c3609e39a5dd0f0
+   > transaction hash:    0x1b1b1261a49959aa8ad8c0710ef90bed566c772405afbc897e3039387cdce925
    > Blocks: 0            Seconds: 0
-   > contract address:    0x65962973593E0FED11c773f453f36A2D42118405
-   > block number:        3881
-   > block timestamp:     1733306348
+   > contract address:    0xaCEb22633347ECEfE005d116872f2F7f900b9569
+   > block number:        4109
+   > block timestamp:     1733654894
    > account:             0x97a33D7B91fb9faeA7240e973E6A9ec173589a35
-   > balance:             99999999988756514.64461674945555899
+   > balance:             99999999988756516.82238972945555899
    > gas used:            250619 (0x3d2fb)
    > gas price:           20 gwei
    > value sent:          0 ETH
@@ -41,41 +36,41 @@ Starting migrations...
 10
 2
 Fee Setter Service address
-0x65962973593E0FED11c773f453f36A2D42118405
+0xaCEb22633347ECEfE005d116872f2F7f900b9569
 
    Replacing 'Register'
    --------------------
-   > transaction hash:    0xcb850377b218d8af39963ad1b346dc5942aff1bdaf3dcc15a3ca360732d53404
+   > transaction hash:    0xab36643c51536b792fe2ae3a68c6f3340e46eccec5d93e251f9d86a606e731fa
    > Blocks: 0            Seconds: 0
-   > contract address:    0xE309d3992374266F66a9B635bD97B0D24ccC316f
-   > block number:        3882
-   > block timestamp:     1733306348
+   > contract address:    0x3D07aD8Df6Db5789D0e132dF0FeE4d899FcE2231
+   > block number:        4110
+   > block timestamp:     1733654894
    > account:             0x97a33D7B91fb9faeA7240e973E6A9ec173589a35
-   > balance:             99999999988756514.61901266945555899
-   > gas used:            1280204 (0x1388cc)
+   > balance:             99999999988756516.79121950945555899
+   > gas used:            1558511 (0x17c7ef)
    > gas price:           20 gwei
    > value sent:          0 ETH
-   > total cost:          0.02560408 ETH
+   > total cost:          0.03117022 ETH
 
    > Saving artifacts
    -------------------------------------
-   > Total cost:          0.02560408 ETH
+   > Total cost:          0.03117022 ETH
 
 
 3_ledger.js
 ===========
 Fee Setter Service address
-0x65962973593E0FED11c773f453f36A2D42118405
+0xaCEb22633347ECEfE005d116872f2F7f900b9569
 
    Replacing 'PaymentLedger'
    -------------------------
-   > transaction hash:    0x00e333b998acdb34a38bb02934d607d67c178d86d6e4ce9b42a9feb23635b43f
+   > transaction hash:    0x3842c24f1efb2477f3a1245ec43ceb68642f3fed93b0be36845d92fc0dab1455
    > Blocks: 0            Seconds: 0
-   > contract address:    0xf2be398f6108f713AbD58781c52d2E7Bd47E7366
-   > block number:        3883
-   > block timestamp:     1733306349
+   > contract address:    0xb43C7aae2070508C55bb004D18000B1f8678CA23
+   > block number:        4111
+   > block timestamp:     1733654894
    > account:             0x97a33D7B91fb9faeA7240e973E6A9ec173589a35
-   > balance:             99999999988756514.59859982945555899
+   > balance:             99999999988756516.77080666945555899
    > gas used:            1020642 (0xf92e2)
    > gas price:           20 gwei
    > value sent:          0 ETH
@@ -88,4 +83,5 @@ Fee Setter Service address
 Summary
 =======
 > Total deployments:   3
-> Final cost:          0.0510293 ETH
+> Final cost:          0.05659544 ETH
+
